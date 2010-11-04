@@ -1,0 +1,10 @@
+TYPEMAP
+WKKM::Clusterer *      T_WKKM_CLUSTERER
+
+INPUT
+T_WKKM_CLUSTERER
+    $var = XS_STATE(WKKM::Clusterer *, $arg);
+
+OUTPUT
+T_WKKM_CLUSTERER
+    XS_STRUCT2OBJ($arg, "Algorithm::KernelKMeans::XS", $var);

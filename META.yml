@@ -1,0 +1,29 @@
+---
+abstract: 'Drop-in replacement for Algorithm::KernelKMeans'
+author:
+  - 'Koichi SATOH <sekia@cpan.org>'
+build_requires:
+  ExtUtils::MakeMaker: 6.42
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
+distribution_type: module
+generated_by: 'Module::Install version 1.00'
+license: mit
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+module_name: Algorithm::KernelKMeans::XS
+name: Algorithm-KernelKMeans-XS
+no_index:
+  directory:
+    - inc
+    - t
+    - xt
+requires:
+  Algorithm::KernelKMeans: 0.02
+  Filter::Util::Call: 0
+  perl: 5.10.0
+resources:
+  license: http://opensource.org/licenses/mit-license.php
+  repository: https://sekia@bitbucket.org/sekia/algorithm-kernelkmeans-xs
+version: 0.01

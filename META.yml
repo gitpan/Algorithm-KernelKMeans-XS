@@ -22,8 +22,7 @@ no_index:
 requires:
   Algorithm::KernelKMeans: 0.02
   Filter::Util::Call: 0
-  perl: 5.10.0
 resources:
   license: http://opensource.org/licenses/mit-license.php
-  repository: https://sekia@bitbucket.org/sekia/algorithm-kernelkmeans-xs
-version: 0.01
+  repository: http://bitbucket.org/sekia/algorithm-kernelkmeans-xs
+version: 0.01_01

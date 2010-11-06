@@ -1,4 +1,8 @@
 Revision history for Perl extension Algorithm::KernelKMeans::XS
 
+0.01_01  2010-11-06
+    - Fixed: "#include <algorithm>" is missing
+    - Fixed: default kernel function's return value is integer casted as double
+
 0.01  2010-11-03
     - Original version

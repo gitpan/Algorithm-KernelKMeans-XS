@@ -1,6 +1,7 @@
 #ifndef WKKM
 #define WKKM
 
+#include <algorithm>
 #include <cmath>
 #include <numeric>
 #include <stdexcept>
@@ -22,7 +23,7 @@ private:
   double l;
   double p;
 public:
-  PolynominalKernel(): l(1), p(2) {}
+  PolynominalKernel(): l(1.0), p(2.0) {}
   PolynominalKernel(double l, double p) : l(l), p(p) {}
   PolynominalKernel(const PolynominalKernel &kernel)
     : l(kernel.l), p(kernel.p) {}
@@ -33,14 +34,9 @@ public:
     return *this;
   }
   double operator()(const vector<double> &x1, const vector<double> &x2) const {
-    double product = std::inner_product(x1.begin(), x1.end(), x2.begin(), 0);
+    double product = std::inner_product(x1.begin(), x1.end(), x2.begin(), 0.0);
     return pow((this->l + product), this->p);
   }
-};
-
-class NumberOfClusterError : public std::runtime_error {
-public:
-  NumberOfClusterError(const std::string &what) : std::runtime_error(what) {}
 };
 
 class Clusterer {
@@ -72,7 +68,7 @@ private:
 
     for (size_t i = 0; i < clusters.size(); i++) {
       const Indices &cluster = clusters[i];
-      double term3 = 0, total_weight = 0;
+      double term3 = 0.0, total_weight = 0.0;
 
       for (size_t j = 0; j < cluster.size(); j++) {
         size_t idx_v = cluster[j];
@@ -94,7 +90,7 @@ private:
       double term1 = this->kernel_matrix[i][i];
       norms[i].resize(clusters.size());
       for (size_t j = 0; j < clusters.size(); j++) {
-        double term2 = 0;
+        double term2 = 0.0;
         const Indices &cluster = clusters[j];
         for (size_t k = 0; k < cluster.size(); k++) {
           size_t idx = cluster[k];
@@ -112,7 +108,7 @@ private:
 
   double compute_score(const vector<Indices> &clusters,
                        const vector<vector<double> > &norms) const {
-    double score = 0;
+    double score = 0.0;
     for (size_t i = 0; i < clusters.size(); i++) {
       const Indices &cluster = clusters[i];
       for (size_t j = 0; j < cluster.size(); j++) {
@@ -169,7 +165,7 @@ public:
   template <typename T>
   Clusterer(const vector<Vertex> &vertices,
             const vector<double> &weights,
-            T kernel) throw (std::invalid_argument)
+            const T &kernel) throw (std::invalid_argument)
     : vertices(vertices),
       weights(weights),
       kernel_matrix(this->compute_kernel_matrix(kernel)) {
@@ -196,18 +192,18 @@ public:
   ~Clusterer() {}
 
   template <typename T>
-  vector<Cluster> run(size_t k, T converged, bool shuffle = true) const {
+  vector<Cluster> run(size_t k, const T &converged, bool shuffle = true) const {
     return this->run(k, k, converged, shuffle);
   }
 
   template <typename T>
   vector<Cluster> run(size_t k, size_t k_min,
-                      T converged, bool shuffle = true) const
-    throw (NumberOfClusterError) {
+                      const T &converged, bool shuffle = true) const
+    throw (std::runtime_error) {
     vector<Indices> clusters = this->init_clusters(k, shuffle);
     vector<vector<double> > norms = this->compute_norms(clusters);
-    double score;
-    double new_score = this->compute_score(clusters, norms);
+    double prev_score;
+    double score = this->compute_score(clusters, norms);
 
     do {
       clusters = this->step(clusters, norms);
@@ -216,12 +212,12 @@ public:
         errmsg << "Number of clusters became less than k_min="
                << k_min
                << std::endl;
-        throw NumberOfClusterError(errmsg.str());
+        throw std::runtime_error(errmsg.str());
       }
       norms = this->compute_norms(clusters);
-      score = new_score;
-      new_score = this->compute_score(clusters, norms);
-    } while (!converged(score, new_score));
+      prev_score = score;
+      score = this->compute_score(clusters, norms);
+    } while (!converged(prev_score, score));
 
     vector<Cluster> result(clusters.size());
     for (size_t i = 0; i < clusters.size(); i++) {

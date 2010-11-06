@@ -1,9 +1,8 @@
 package Algorithm::KernelKMeans::XS;
 
-use 5.010;
 use strict;
 use warnings;
-our $VERSION = '0.01';
+our $VERSION = '0.01_01';
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
@@ -21,7 +20,7 @@ Algorithm::KernelKMeans::XS - Drop-in replacement for Algorithm::KernelKMeans
 
 =head1 DESCRIPTION
 
-This module is XS version of L<Algorithm::KernelKMeans>, a implementation of weigheted kernel k-means vector clusterer.
+This module is yet another implementation of L<Algorithm::KernelKMeans>, a weighted kernel k-means vector clusterer.
 
 Note that when this module is installed, C<Algorithm::KernelKMeans> behaves as a child class of this.
 

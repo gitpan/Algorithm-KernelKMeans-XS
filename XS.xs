@@ -207,7 +207,7 @@ bool converged_default(double score, double new_score) {
     Perl_croak(aTHX_ "Named parameters are required");     \
   }
 
-#define CROAK_IF_UNKNOWN_PARAMETER_WAS_REST(hash)     \
+#define CROAK_IF_UNKNOWN_PARAMETER_IS_REST(hash)      \
   {                                                   \
     if (HvUSEDKEYS(hash) != 0) {                      \
       hv_iterinit(hash);                              \
@@ -257,17 +257,17 @@ CODE:
         WKKM::KernelMatrix kmat;
         array2matrix((AV *)SvRV(kmat_ref), kmat);
 
-        CROAK_IF_UNKNOWN_PARAMETER_WAS_REST(args);
+        CROAK_IF_UNKNOWN_PARAMETER_IS_REST(args);
         RETVAL = new WKKM::Clusterer(verts, weights, kmat);
       } else {
         if (hv_exists(args, "kernel", 6)) {
-          SV *kernel = hv_delete(args, "kernel", 6, 0);
-          KernelSubWrapper kernel_wrapped(kernel);
-          CROAK_IF_UNKNOWN_PARAMETER_WAS_REST(args);
-          RETVAL = new WKKM::Clusterer(verts, weights, kernel_wrapped);
+          KernelSubWrapper kernel(hv_delete(args, "kernel", 6, 0));
+          CROAK_IF_UNKNOWN_PARAMETER_IS_REST(args);
+          RETVAL = new WKKM::Clusterer(verts, weights, kernel);
         } else {
-          CROAK_IF_UNKNOWN_PARAMETER_WAS_REST(args);
-          RETVAL = new WKKM::Clusterer(verts, weights, PolynominalKernel(1, 2));
+          CROAK_IF_UNKNOWN_PARAMETER_IS_REST(args);
+          WKKM::PolynominalKernel kernel(1.0, 2.0);
+          RETVAL = new WKKM::Clusterer(verts, weights, kernel);
         }
       }
     } catch (const std::invalid_argument &e) {
@@ -309,16 +309,16 @@ CODE:
   try {
     std::vector<Cluster> clusters;
     if (hv_exists(args, "converged", 9)) {
-      SV *converged = hv_delete(args, "converged", 9, 0);
-      CROAK_IF_UNKNOWN_PARAMETER_WAS_REST(args);
-      clusters = THIS->run(k, k_min, PredictSubWrapper(converged), shuffle);
+      PredictSubWrapper converged(hv_delete(args, "converged", 9, 0));
+      CROAK_IF_UNKNOWN_PARAMETER_IS_REST(args);
+      clusters = THIS->run(k, k_min, converged, shuffle);
     } else {
-      CROAK_IF_UNKNOWN_PARAMETER_WAS_REST(args);
+      CROAK_IF_UNKNOWN_PARAMETER_IS_REST(args);
       clusters = THIS->run(k, k_min, converged_default, shuffle);
     }
     AV *clusters_av = clusters2array(clusters);
     RETVAL = newRV_noinc((SV *)clusters_av);
-  } catch (const WKKM::NumberOfClusterError &e) {
+  } catch (const std::runtime_error &e) {
     Perl_croak(aTHX_ e.what());
   } catch (...) { throw; }
 OUTPUT:

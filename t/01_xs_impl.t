@@ -3,6 +3,7 @@ use warnings;
 
 use ExtUtils::testlib;
 use FindBin;
+use List::MoreUtils qw/zip/;
 use Test::More;
 use Test::Exception;
 
@@ -13,7 +14,11 @@ use Algorithm::KernelKMeans::Util qw/generate_polynominal_kernel/;
 use Algorithm::NaiveKMeans;
 
 open my $vectors , '<', "$FindBin::Bin/vectors.txt" or die $!;
-my @vertices = map { [ split /\s+/ ] } <$vectors>;
+my @vertices = map {
+  my @vals = split /\s+/;
+  my @keys = 0 .. $#vals;
+  +{ zip @keys, @vals };
+} <$vectors>;
 open my $kmat, '<', "$FindBin::Bin/kernels.txt" or die $!;
 my @kernel_matrix = map { [ split /\s+/ ] } <$kmat>;
 
@@ -31,6 +36,10 @@ lives_ok {
     weights => [0 .. $#vertices]
   );
 } '"vertices" and "weights" must be same size';
+
+dies_ok {
+  Algorithm::KernelKMeans::XS->new(vertices => []);
+} '"vertices" must not be empty';
 
 dies_ok {
   Algorithm::KernelKMeans::XS->new(
@@ -58,11 +67,11 @@ dies_ok {
     vertices => \@vertices,
     kernel_matrix => [ @kernel_matrix[0 .. 31] ]
   );
-} 'Kernel matrix must be a lower triangle bigger than NxN (N is number of vertices)';
+} 'Kernel matrix must be bigger than NxN (N is number of vertices)';
 
 sub sort_cluster {
   [ sort {
-    $a->[0] <=> $b->[0] or $a->[1] <=> $b->[1] or $a->[2] <=> $b->[2]
+    $a->{0} <=> $b->{0} or $a->{1} <=> $b->{1} or $a->{2} <=> $b->{2}
   } @{ +shift } ]
 }
 

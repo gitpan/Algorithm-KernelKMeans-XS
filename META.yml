@@ -20,9 +20,10 @@ no_index:
     - t
     - xt
 requires:
-  Algorithm::KernelKMeans: 0.02
+  Algorithm::KernelKMeans: 0.03
   Filter::Util::Call: 0
+  perl: 5.8.0
 resources:
   license: http://opensource.org/licenses/mit-license.php
   repository: http://bitbucket.org/sekia/algorithm-kernelkmeans-xs
-version: 0.01_01
+version: 0.02

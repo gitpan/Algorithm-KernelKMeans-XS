@@ -1,5 +1,6 @@
 use inc::Module::Install;
 
+perl_version '5.008';
 all_from 'lib/Algorithm/KernelKMeans/XS.pm';
 
 can_cc or die "This module requires a C compiler";
@@ -23,7 +24,7 @@ makemaker_args(
 tests 't/*.t';
 author_tests 'xt';
 
-requires 'Algorithm::KernelKMeans' => '0.02';
+requires 'Algorithm::KernelKMeans' => '0.03';
 
 test_requires 'ExtUtils::testlib' => '6.56';
 test_requires 'Test::Exception'   => '0.29';

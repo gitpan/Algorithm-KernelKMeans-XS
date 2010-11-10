@@ -7,10 +7,10 @@ use warnings;
 
 use Carp;
 use List::Util qw/sum shuffle/;
-use List::MoreUtils qw/natatime each_arrayref/;
+use List::MoreUtils qw/natatime/;
 use Moose;
 use MooseX::Types::Common::Numeric qw/PositiveNum/;
-use MooseX::Types::Moose qw/ArrayRef CodeRef/;
+use MooseX::Types::Moose qw/ArrayRef HashRef CodeRef/;
 use POSIX qw/floor/;
 
 use ExtUtils::testlib;
@@ -18,7 +18,7 @@ use Algorithm::KernelKMeans::Util qw/centroid/;
 
 has 'vertices' => (
   is => 'ro',
-  isa => ArrayRef[ ArrayRef[PositiveNum] ],
+  isa => ArrayRef[ HashRef[PositiveNum] ],
   required => 1,
   traits => [qw/Array/],
   handles => +{
@@ -29,15 +29,17 @@ has 'vertices' => (
 
 sub sub_vector {
   my ($x1, $x2) = @_;
-  my $iter = each_arrayref $x1, $x2;
-  my @sub;
-  while (my ($s1, $s2) = $iter->()) { push @sub, $s1 - $s2 }
-  \@sub;
+  my %tmp; @tmp{keys %$x1, keys %$x2} = ();
+  my %sub = map {
+    my ($e1, $e2) = (($x1->{$_} // 0), ($x2->{$_} // 0));
+    ($_ => $e1 - $e2);
+  } keys %tmp;
+  \%sub;
 }
 
 sub norm {
   my $vec = shift;
-  sqrt sum map { $_ ** 2 } @$vec;
+  sqrt sum map { $_ ** 2 } values %$vec;
 }
 
 sub score {

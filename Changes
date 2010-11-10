@@ -1,5 +1,8 @@
 Revision history for Perl extension Algorithm::KernelKMeans::XS
 
+0.02  2010-11-10
+    - IMCOMPATIBLE CHANGE: Now all vectors represented as a hashref
+
 0.01_01  2010-11-06
     - Fixed: "#include <algorithm>" is missing
     - Fixed: default kernel function's return value is integer casted as double

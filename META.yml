@@ -26,4 +26,4 @@ requires:
 resources:
   license: http://opensource.org/licenses/mit-license.php
   repository: http://bitbucket.org/sekia/algorithm-kernelkmeans-xs
-version: 0.02
+version: 0.02_01

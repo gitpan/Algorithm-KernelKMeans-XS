@@ -1,9 +1,12 @@
+use strict;
+use warnings;
 use inc::Module::Install;
 
 perl_version '5.008';
 all_from 'lib/Algorithm/KernelKMeans/XS.pm';
 
 can_cc or die "This module requires a C compiler";
+cc_lib_links qw/stdc++/;
 
 ppport;
 makemaker_args(

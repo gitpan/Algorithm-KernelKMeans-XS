@@ -1,5 +1,8 @@
 Revision history for Perl extension Algorithm::KernelKMeans::XS
 
+0.02_01 2010-11-21
+    - Added linker option "-lstdc++" for system whose $CXX is gcc
+
 0.02  2010-11-10
     - IMCOMPATIBLE CHANGE: Now all vectors represented as a hashref
 

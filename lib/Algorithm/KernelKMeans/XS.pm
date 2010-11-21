@@ -2,7 +2,7 @@ package Algorithm::KernelKMeans::XS;
 
 use strict;
 use warnings;
-our $VERSION = '0.02';
+our $VERSION = '0.02_01';
 
 require XSLoader;
 XSLoader::load(__PACKAGE__, $VERSION);
